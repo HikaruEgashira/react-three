@@ -35,11 +35,15 @@ export default (_: Record<string, string>, argv: Record<string, string>) => {
             },
           },
         },
+        {
+          test: /\.s[ac]ss$/i,
+          use: ['style-loader', 'css-loader', 'sass-loader'],
+        },
       ],
     },
     plugins: [
       new HtmlWebpackPlugin({
-        title: 'swc playground',
+        title: '🌱PARK',
         // favicon: path.join(__dirname, "assets", "favicon.svg"),
       }),
     ],

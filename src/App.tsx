@@ -1,3 +1,9 @@
+import { SceneVoid } from './scene/Void'
+
 export default function App() {
-  return <div>Hello</div>
+  return (
+    <div className="container">
+      <SceneVoid />
+    </div>
+  )
 }
