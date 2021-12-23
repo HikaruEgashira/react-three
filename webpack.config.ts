@@ -3,6 +3,7 @@ import type { Configuration } from 'webpack'
 import merge from 'webpack-merge'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
 import ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin'
+import WebpackBar from 'webpackbar'
 
 export default (_: Record<string, string>, argv: Record<string, string>) => {
   const isDev = argv.mode === 'development'
@@ -10,6 +11,7 @@ export default (_: Record<string, string>, argv: Record<string, string>) => {
   const baseConfig: Configuration = {
     entry: './src/main.tsx',
     output: {
+      filename: '[name].[contenthash:8].js',
       clean: true,
     },
     module: {
@@ -18,7 +20,12 @@ export default (_: Record<string, string>, argv: Record<string, string>) => {
           test: /\.tsx?$/,
           loader: 'swc-loader',
           options: {
+            minify: true,
             jsc: {
+              minify: {
+                compress: true,
+                mangle: true,
+              },
               parser: {
                 syntax: 'typescript',
                 tsx: true,
@@ -36,7 +43,7 @@ export default (_: Record<string, string>, argv: Record<string, string>) => {
           },
         },
         {
-          test: /\.s[ac]ss$/i,
+          test: /\.scss$/i,
           use: ['style-loader', 'css-loader', 'sass-loader'],
         },
       ],
@@ -44,8 +51,8 @@ export default (_: Record<string, string>, argv: Record<string, string>) => {
     plugins: [
       new HtmlWebpackPlugin({
         title: '🌱PARK',
-        // favicon: path.join(__dirname, "assets", "favicon.svg"),
       }),
+      new WebpackBar(),
     ],
     resolve: {
       extensions: ['.js', '.tsx', '.ts'],
@@ -56,9 +63,9 @@ export default (_: Record<string, string>, argv: Record<string, string>) => {
     devServer: {
       hot: true,
     },
-    devtool: 'eval-cheap-module-source-map',
-    stats: 'errors-warnings',
-    ignoreWarnings: [/size limit/i],
+    devtool: isDev && 'eval-cheap-module-source-map',
+    stats: 'minimal',
+    ignoreWarnings: [/limit/i],
   }
 
   if (isDev) {
@@ -67,9 +74,5 @@ export default (_: Record<string, string>, argv: Record<string, string>) => {
     })
   }
 
-  return merge(baseConfig, {
-    output: {
-      filename: '[name].[contenthash:8].js',
-    },
-  })
+  return baseConfig
 }
